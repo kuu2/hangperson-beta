@@ -4,39 +4,60 @@ class HangpersonGame
   # to make the tests in spec/hangperson_game_spec.rb pass.
 
   # Get a word from remote "random word" service
-  attr_accessor :word, :guesses, :wrong_guesses, :play_count, :word_so_far
+  attr_accessor :word, :guesses, :wrong_guesses, :play_count, :word_so_far, :message
 
   def initialize(guess_word)
   	@word = guess_word
   	@guesses = ''
   	@wrong_guesses = ''
   	@play_count = 0
-  	@word_so_far = ''
+  	@word_so_far = ' '
   end
 
   def guess(letter)
   	if letter.nil?
-  		raise ArgumentError, 'no value!'
+      begin
+  		  raise ArgumentError, 'no value!'
+      rescue 
+        @message = "Invalid guess."
+        return false
+      end
   	end
   	if letter.empty?
-  		raise ArgumentError, 'empty guess!'
+      begin
+  		  raise ArgumentError, 'empty guess!'
+      rescue
+        @message = "Invalid guess."
+        return false
+      end
   	end
   	if !!(letter =~ /[^a-z]/i)
-  		raise ArgumentError, 'not a letter!'
+      begin
+  		  raise ArgumentError, 'not a letter!'
+      rescue
+        @message = "Invalid guess."
+        return false
+      end
   	end
   	if letter.nil?
-  		raise ArgumentError, 'no value!'
+      begin
+  		  raise ArgumentError, 'no value!'
+      rescue
+        @message = "Invalid guess."
+        return false
+      end
   	end
-  	unless (@guesses.include? letter) || (@wrong_guesses.include? letter)
-  		if @word.include? letter
+  	unless (@guesses.downcase.include? letter.downcase) || (@wrong_guesses.downcase.include? letter.downcase)
+  		if @word.downcase.include? letter.downcase
   			@guesses += letter
-  			@word_so_far = @word.gsub(/[^#{guesses}]/, "-")
+  			@word_so_far = @word.gsub(/[^#{guesses}]/i, "-")
   		else
   			@wrong_guesses += letter
+        @play_count += 1
   		end
-  		@play_count += 1
   		return true
   	else
+      @message = "You have already used that letter."
   		return false
   	end
   end
